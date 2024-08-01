@@ -85,6 +85,10 @@ public class DefaultBatchFlushEndpoint implements RedisChannelWriter, BatchFlush
 
     private static final Set<Class<? extends Throwable>> SHOULD_NOT_RETRY_EXCEPTION_TYPES = new HashSet<>();
 
+    public static final AtomicLong FLUSHED_BATCH_COUNT = new AtomicLong();
+
+    public static final AtomicLong FLUSHED_COMMAND_COUNT = new AtomicLong();
+
     static {
         SHOULD_NOT_RETRY_EXCEPTION_TYPES.add(EncoderException.class);
         SHOULD_NOT_RETRY_EXCEPTION_TYPES.add(Error.class);
@@ -295,6 +299,7 @@ public class DefaultBatchFlushEndpoint implements RedisChannelWriter, BatchFlush
 
     @Override
     public void notifyChannelActive(Channel channel) {
+        Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
         lastEventLoop = channel.eventLoop();
 
         final ContextualChannel contextualChannel = new ContextualChannel(channel, ConnectionContext.State.CONNECTED);
@@ -696,6 +701,8 @@ public class DefaultBatchFlushEndpoint implements RedisChannelWriter, BatchFlush
 
         if (count > 0) {
             batchFlushEndPointContext.add(count);
+            FLUSHED_BATCH_COUNT.incrementAndGet();
+            FLUSHED_COMMAND_COUNT.addAndGet(count);
 
             channelFlush(chan);
             if (batchFlushEndPointContext.hasRetryableFailedToSendTasks()) {

@@ -1,0 +1,47 @@
+redis:
+appendfsync: everysec
+
+SingleThreadAsyncSet:
+INFO: =====================================
+INFO: autoBatchFlush: true
+INFO: Total commands: 10,000,000
+INFO: Total time: 19.718092708s
+INFO: Avg latency: 3.0506220494644998s
+INFO: Avg QPS: 507148.4421991186/s
+INFO: =====================================
+INFO: autoBatchFlush: false
+INFO: Total commands: 10,000,000
+INFO: Total time: 65.889445958s
+INFO: Avg latency: 26.9698866602735s
+INFO: Avg QPS: 151769.37451218386/s
+INFO: =====================================
+
+SingleThreadAsyncGet:
+INFO: =====================================
+INFO: autoBatchFlush: true
+INFO: Total commands: 10,000,000
+INFO: Avg latency: 3.5772636280101997s
+INFO: Avg QPS: 478328.53641560586/s
+INFO: =====================================
+INFO: autoBatchFlush: false
+INFO: Total commands: 10,000,000
+INFO: Total time: 67.018461625s
+INFO: Avg latency: 27.8533181368302s
+INFO: Avg QPS: 149212.61630794706/s
+INFO: =====================================
+
+
+MultiThreadSyncGet-32-Threads:
+INFO: =====================================
+INFO: autoBatchFlush: false
+INFO: Total commands: 32,000,000
+INFO: Total time: 114.480539583s
+INFO: Avg latency: 113.86895440625us
+INFO: Avg QPS: 279523.49033784517/s
+INFO: =====================================
+INFO: autoBatchFlush: false
+INFO: Total commands: 32,000,000
+INFO: Total time: 316.706041375s
+INFO: Avg latency: 315.92250015625us
+INFO: Avg QPS: 101040.06813722248/s
+INFO: =====================================

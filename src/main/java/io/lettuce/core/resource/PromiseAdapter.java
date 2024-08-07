@@ -8,7 +8,7 @@ import io.netty.util.concurrent.*;
  * @author Mark Paluch
  * @since 3.4
  */
-class PromiseAdapter {
+public class PromiseAdapter {
 
     /**
      * Create a promise that emits a {@code Boolean} value on completion of the {@code future}
@@ -17,7 +17,7 @@ class PromiseAdapter {
      * @return Promise emitting a {@code Boolean} value. {@code true} if the {@code future} completed successfully, otherwise
      *         the cause wil be transported.
      */
-    static Promise<Boolean> toBooleanPromise(Future<?> future) {
+    public static Promise<Boolean> toBooleanPromise(Future<?> future) {
 
         DefaultPromise<Boolean> result = new DefaultPromise<>(GlobalEventExecutor.INSTANCE);
 

@@ -101,6 +101,7 @@ abstract class AbstractSingleThreadAsync<T> {
             getLogger().info("Avg latency: {}s", totalLatency.get() / (double) totalCount.get() / 1000.0 / 1000.0);
             getLogger().info("Avg QPS: {}/s", totalCount.get() / costInSeconds);
             BenchUtils.logEnterRatioIfNeeded(logger);
+            BenchUtils.logAvgBatchCount(logger);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new IllegalStateException(e);

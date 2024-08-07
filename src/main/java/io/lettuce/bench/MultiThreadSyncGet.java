@@ -25,22 +25,15 @@ public class MultiThreadSyncGet {
 
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(MultiThreadSyncGet.class);
 
-    private static final int THREAD_COUNT = 512;
-
-    private static final int LOOP_NUM = 10_000;
-
     private static final int DIGIT_NUM = 9;
 
     private static final String KEY_FORMATTER = String.format("key-%%0%dd", DIGIT_NUM);
 
     private static final String VALUE_FORMATTER = String.format("value-%%0%dd", DIGIT_NUM);
 
-    static {
-        // noinspection ConstantValue
-        LettuceAssert.assertState(DIGIT_NUM >= String.valueOf(LOOP_NUM).length() + 1, "digit num is not large enough");
-    }
+    void test(boolean useBatchFlush, int threadCount, int loopNum, int batchSize) {
+        LettuceAssert.assertState(DIGIT_NUM >= String.valueOf(loopNum).length() + 1, "digit num is not large enough");
 
-    void test(boolean useBatchFlush) {
         DefaultBatchFlushEndpoint.FLUSHED_COMMAND_COUNT.set(0L);
         DefaultBatchFlushEndpoint.FLUSHED_BATCH_COUNT.set(0L);
         try (RedisClient redisClient = RedisClient
@@ -48,19 +41,18 @@ public class MultiThreadSyncGet {
             final ClientOptions.Builder optsBuilder = ClientOptions.builder()
                     .timeoutOptions(TimeoutOptions.builder().fixedTimeout(Duration.ofSeconds(7200)).build());
             if (useBatchFlush) {
-                optsBuilder
-                        .autoBatchFlushOptions(AutoBatchFlushOptions.builder().enableAutoBatchFlush(true).batchSize(8).build());
+                optsBuilder.autoBatchFlushOptions(
+                        AutoBatchFlushOptions.builder().enableAutoBatchFlush(true).batchSize(batchSize).build());
             }
             redisClient.setOptions(optsBuilder.build());
             final StatefulRedisConnection<byte[], byte[]> connection = redisClient.connect(ByteArrayCodec.INSTANCE);
 
-            logger.info("thread count: {}", THREAD_COUNT);
-            final Thread[] threads = new Thread[THREAD_COUNT];
+            final Thread[] threads = new Thread[threadCount];
             final AtomicLong totalCount = new AtomicLong();
             final AtomicLong totalLatency = new AtomicLong();
-            for (int i = 0; i < THREAD_COUNT; i++) {
+            for (int i = 0; i < threadCount; i++) {
                 threads[i] = new Thread(() -> {
-                    for (int j = 0; j < LOOP_NUM; j++) {
+                    for (int j = 0; j < loopNum; j++) {
                         final long cmdStart = System.nanoTime();
                         final byte[] resultBytes = connection.sync().get(genKey(j));
                         totalLatency.addAndGet((System.nanoTime() - cmdStart) / 1000);
@@ -98,10 +90,45 @@ public class MultiThreadSyncGet {
     }
 
     public static void main(String[] args) {
+        int threadCount = 0;
+        int loopNum = 0;
+        int batchSize = 0;
+        int i = 0;
+        while (i < args.length) {
+            switch (args[i]) {
+                case "-t":
+                    i++;
+                    threadCount = Integer.parseInt(args[i]);
+                    break;
+                case "-n":
+                    i++;
+                    loopNum = Integer.parseInt(args[i]);
+                    break;
+                case "-b":
+                    i++;
+                    batchSize = Integer.parseInt(args[i]);
+                    break;
+                default:
+                    throw new IllegalArgumentException("unknown option: " + args[i]);
+            }
+            i++;
+        }
+        if (threadCount == 0) {
+            throw new IllegalArgumentException("thread count must be specified");
+        }
+        if (loopNum == 0) {
+            throw new IllegalArgumentException("loop num must be specified");
+        }
+        if (batchSize == 0) {
+            throw new IllegalArgumentException("batch size must be specified");
+        }
+        logger.info("thread count: {}", threadCount);
+        logger.info("loop num: {}", loopNum);
+        logger.info("batch size: {}", batchSize);
         for (boolean useBatchFlush : new boolean[] { true, false }) {
             logger.info("=====================================");
             logger.info("useBatchFlush: {}", useBatchFlush);
-            new MultiThreadSyncGet().test(useBatchFlush);
+            new MultiThreadSyncGet().test(useBatchFlush, threadCount, loopNum, batchSize);
         }
         logger.info("=====================================");
     }

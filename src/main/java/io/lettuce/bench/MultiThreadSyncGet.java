@@ -48,8 +48,8 @@ public class MultiThreadSyncGet {
             final ClientOptions.Builder optsBuilder = ClientOptions.builder()
                     .timeoutOptions(TimeoutOptions.builder().fixedTimeout(Duration.ofSeconds(7200)).build());
             if (useBatchFlush) {
-                optsBuilder.autoBatchFlushOptions(
-                        AutoBatchFlushOptions.builder().enableAutoBatchFlush(true).batchSize(8).build());
+                optsBuilder
+                        .autoBatchFlushOptions(AutoBatchFlushOptions.builder().enableAutoBatchFlush(true).batchSize(8).build());
             }
             redisClient.setOptions(optsBuilder.build());
             final StatefulRedisConnection<byte[], byte[]> connection = redisClient.connect(ByteArrayCodec.INSTANCE);

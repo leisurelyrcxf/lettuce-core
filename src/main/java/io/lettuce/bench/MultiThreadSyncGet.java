@@ -26,7 +26,7 @@ public class MultiThreadSyncGet {
 
     private static final int THREAD_COUNT = 32;
 
-    private static final int LOOP_NUM = 500_000;
+    private static final int LOOP_NUM = 200_000;
 
     private static final int DIGIT_NUM = 9;
 

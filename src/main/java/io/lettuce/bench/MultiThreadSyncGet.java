@@ -14,6 +14,7 @@ import io.lettuce.core.TimeoutOptions;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.codec.ByteArrayCodec;
 import io.lettuce.core.internal.LettuceAssert;
+import io.lettuce.core.protocol.DefaultBatchFlushEndpoint;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 
@@ -40,6 +41,8 @@ public class MultiThreadSyncGet {
     }
 
     void test(boolean useBatchFlush) {
+        DefaultBatchFlushEndpoint.FLUSHED_COMMAND_COUNT.set(0L);
+        DefaultBatchFlushEndpoint.FLUSHED_BATCH_COUNT.set(0L);
         try (RedisClient redisClient = RedisClient
                 .create(RedisURI.create("test-cluster-0001-001.p24bb1.0001.apse2.cache.amazonaws.com", 6379))) {
             final ClientOptions.Builder optsBuilder = ClientOptions.builder()

@@ -26,7 +26,7 @@ abstract class AbstractSingleThreadAsync<T> {
         return logger;
     }
 
-    private static final int LOOP_NUM = 10_000_000;
+    private static final int LOOP_NUM = 4_000_000;
 
     private static final int DIGIT_NUM = 9;
 

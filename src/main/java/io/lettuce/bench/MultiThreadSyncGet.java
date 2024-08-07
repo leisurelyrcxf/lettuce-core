@@ -24,9 +24,9 @@ public class MultiThreadSyncGet {
 
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(MultiThreadSyncGet.class);
 
-    private static final int THREAD_COUNT = 32;
+    private static final int THREAD_COUNT = 512;
 
-    private static final int LOOP_NUM = 200_000;
+    private static final int LOOP_NUM = 10_000;
 
     private static final int DIGIT_NUM = 9;
 
@@ -45,7 +45,8 @@ public class MultiThreadSyncGet {
             final ClientOptions.Builder optsBuilder = ClientOptions.builder()
                     .timeoutOptions(TimeoutOptions.builder().fixedTimeout(Duration.ofSeconds(7200)).build());
             if (useBatchFlush) {
-                optsBuilder.autoBatchFlushOptions(AutoBatchFlushOptions.builder().enableAutoBatchFlush(true).build());
+                optsBuilder.autoBatchFlushOptions(
+                        AutoBatchFlushOptions.builder().enableAutoBatchFlush(true).batchSize(1000).build());
             }
             redisClient.setOptions(optsBuilder.build());
             final StatefulRedisConnection<byte[], byte[]> connection = redisClient.connect(ByteArrayCodec.INSTANCE);

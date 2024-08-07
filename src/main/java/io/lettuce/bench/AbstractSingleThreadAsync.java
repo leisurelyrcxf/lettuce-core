@@ -26,7 +26,7 @@ abstract class AbstractSingleThreadAsync<T> {
         return logger;
     }
 
-    private static final int LOOP_NUM = 1_0_000_000;
+    private static final int LOOP_NUM = 4_000_000;
 
     private static final int DIGIT_NUM = 9;
 
@@ -53,7 +53,8 @@ abstract class AbstractSingleThreadAsync<T> {
     protected abstract void assertResult(byte[] key, byte[] value, T result);
 
     protected final void test(boolean useBatchFlush) {
-        try (RedisClient redisClient = RedisClient.create(RedisURI.create("127.0.0.1", 6379))) {
+        try (RedisClient redisClient = RedisClient
+                .create(RedisURI.create("test-cluster-0001-001.p24bb1.0001.apse2.cache.amazonaws.com", 6379))) {
             final ClientOptions.Builder optsBuilder = ClientOptions.builder()
                     .timeoutOptions(TimeoutOptions.builder().fixedTimeout(Duration.ofSeconds(7200)).build());
             if (useBatchFlush) {

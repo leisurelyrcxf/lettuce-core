@@ -40,7 +40,8 @@ public class MultiThreadSyncGet {
     }
 
     void test(boolean useBatchFlush) {
-        try (RedisClient redisClient = RedisClient.create(RedisURI.create("127.0.0.1", 6379))) {
+        try (RedisClient redisClient = RedisClient
+                .create(RedisURI.create("test-cluster-0001-001.p24bb1.0001.apse2.cache.amazonaws.com", 6379))) {
             final ClientOptions.Builder optsBuilder = ClientOptions.builder()
                     .timeoutOptions(TimeoutOptions.builder().fixedTimeout(Duration.ofSeconds(7200)).build());
             if (useBatchFlush) {

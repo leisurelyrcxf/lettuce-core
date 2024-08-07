@@ -58,7 +58,7 @@ abstract class AbstractSingleThreadAsync<T> {
             final ClientOptions.Builder optsBuilder = ClientOptions.builder()
                     .timeoutOptions(TimeoutOptions.builder().fixedTimeout(Duration.ofSeconds(7200)).build());
             if (useBatchFlush) {
-                optsBuilder.autoBatchFlushOptions(AutoBatchFlushOptions.builder().enableAutoBatchFlush(true).busyLoop(true)
+                optsBuilder.autoBatchFlushOptions(AutoBatchFlushOptions.builder().enableAutoBatchFlush(true).busyLoop(false)
                         .busyLoopDelayInNanos(10).batchSize(8).build());
             }
             redisClient.setOptions(optsBuilder.build());

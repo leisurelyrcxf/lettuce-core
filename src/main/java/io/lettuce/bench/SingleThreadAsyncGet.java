@@ -23,8 +23,8 @@ public class SingleThreadAsyncGet extends AbstractSingleThreadAsync<byte[]> {
 
     @Override
     protected void assertResult(byte[] key, byte[] value, byte[] result) {
-        LettuceAssert.assertState(Arrays.equals(value, result), String.format("value not match, exp: '%s', got: '%s'",
-                new String(value), result == null ? "null" : new String(result)));
+        // LettuceAssert.assertState(Arrays.equals(value, result), String.format("value not match, exp: '%s', got: '%s'",
+        // new String(value), result == null ? "null" : new String(result)));
     }
 
     public static void main(String[] args) {

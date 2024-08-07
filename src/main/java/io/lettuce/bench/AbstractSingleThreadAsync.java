@@ -58,7 +58,8 @@ abstract class AbstractSingleThreadAsync<T> {
             final ClientOptions.Builder optsBuilder = ClientOptions.builder()
                     .timeoutOptions(TimeoutOptions.builder().fixedTimeout(Duration.ofSeconds(7200)).build());
             if (useBatchFlush) {
-                optsBuilder.autoBatchFlushOptions(AutoBatchFlushOptions.builder().enableAutoBatchFlush(true).build());
+                optsBuilder.autoBatchFlushOptions(AutoBatchFlushOptions.builder().enableAutoBatchFlush(true).busyLoop(true)
+                        .busyLoopDelayInNanos(100).batchSize(1024).build());
             }
             redisClient.setOptions(optsBuilder.build());
             final StatefulRedisConnection<byte[], byte[]> connection = redisClient.connect(ByteArrayCodec.INSTANCE);

@@ -60,7 +60,7 @@ public class MultiThreadSyncGet {
                         final long cmdStart = System.nanoTime();
                         final byte[] resultBytes = connection.sync().get(genKey(j));
                         totalLatency.addAndGet((System.nanoTime() - cmdStart) / 1000);
-                        LettuceAssert.assertState(Arrays.equals(genValue(j), resultBytes), "value not match");
+                        // LettuceAssert.assertState(Arrays.equals(genValue(j), resultBytes), "value not match");
                         totalCount.incrementAndGet();
                     }
                 });

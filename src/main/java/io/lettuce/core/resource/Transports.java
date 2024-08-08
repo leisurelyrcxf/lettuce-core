@@ -60,7 +60,7 @@ public class Transports {
     public static class NativeTransports {
 
         static EventLoopResources RESOURCES = KqueueProvider.isAvailable() ? KqueueProvider.getResources()
-                : IOUringProvider.isAvailable() ? IOUringProvider.getResources() : EpollProvider.getResources();
+                : EpollProvider.getResources();
 
         /**
          * @return {@code true} if a native transport is available.
@@ -109,8 +109,8 @@ public class Transports {
         }
 
         /**
-         * @return the native transport {@link EventLoopGroup} class.
          * @param domainSocket {@code true} to indicate Unix Domain Socket usage, {@code false} otherwise.
+         * @return the native transport {@link EventLoopGroup} class.
          * @since 6.3.3
          */
         public static Class<? extends EventLoopGroup> eventLoopGroupClass(boolean domainSocket) {

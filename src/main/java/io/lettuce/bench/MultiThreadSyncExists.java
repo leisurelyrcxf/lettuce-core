@@ -21,9 +21,9 @@ import io.netty.util.internal.logging.InternalLoggerFactory;
 /**
  * @author chenxiaofan
  */
-public class MultiThreadSyncGet {
+public class MultiThreadSyncExists {
 
-    private static final InternalLogger logger = InternalLoggerFactory.getInstance(MultiThreadSyncGet.class);
+    private static final InternalLogger logger = InternalLoggerFactory.getInstance(MultiThreadSyncExists.class);
 
     private static final int DIGIT_NUM = 9;
 
@@ -41,8 +41,8 @@ public class MultiThreadSyncGet {
             final ClientOptions.Builder optsBuilder = ClientOptions.builder()
                     .timeoutOptions(TimeoutOptions.builder().fixedTimeout(Duration.ofSeconds(7200)).build());
             if (useBatchFlush) {
-                optsBuilder.autoBatchFlushOptions(AutoBatchFlushOptions.builder().enableAutoBatchFlush(true)
-                        .batchSize(batchSize).writeSpinCount(Integer.MAX_VALUE).build());
+                optsBuilder.autoBatchFlushOptions(
+                        AutoBatchFlushOptions.builder().enableAutoBatchFlush(true).batchSize(batchSize).build());
             }
             redisClient.setOptions(optsBuilder.build());
             final StatefulRedisConnection<byte[], byte[]> connection = redisClient.connect(ByteArrayCodec.INSTANCE);
@@ -54,9 +54,8 @@ public class MultiThreadSyncGet {
                 threads[i] = new Thread(() -> {
                     for (int j = 0; j < loopNum; j++) {
                         final long cmdStart = System.nanoTime();
-                        final byte[] resultBytes = connection.sync().get(genKey(j));
+                        connection.sync().exists(genKey(j));
                         totalLatency.addAndGet((System.nanoTime() - cmdStart) / 1000);
-                        // LettuceAssert.assertState(Arrays.equals(genValue(j), resultBytes), "value not match");
                         totalCount.incrementAndGet();
                     }
                 });
@@ -128,7 +127,7 @@ public class MultiThreadSyncGet {
         for (boolean useBatchFlush : new boolean[] { true, false }) {
             logger.info("=====================================");
             logger.info("useBatchFlush: {}", useBatchFlush);
-            new MultiThreadSyncGet().test(useBatchFlush, threadCount, loopNum, batchSize);
+            new MultiThreadSyncExists().test(useBatchFlush, threadCount, loopNum, batchSize);
         }
         logger.info("=====================================");
     }
